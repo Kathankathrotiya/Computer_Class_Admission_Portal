@@ -45,32 +45,18 @@
 
         <label for="installmentAmount3">Installment Amount 3:</label>
         <input type="number" id="installmentAmount3" name="installmentAmount3"><br>
+            
+        <label for="amounttobePaid">Amount to be Paid:</label>
+        <input type="number" id="amounttobePaid" name="amounttobePaid" readonly><br>
         
-        <!-- <label for="examDate">Exam Date:</label>
-        <input type="date" id="examDate" name="examDate"><br>
+        <label for="finalFees">Final Fees:</label>
+        <input type="number" id="finalFees" name="finalFees" readonly><br>
+        
+        <label for="completionDate">Completion Date:</label>
+        <input type="date" id="completionDate" name="completionDate"><br>
+        
+        <button type="submit">Submit</button>
 
-        <label for="certificateDate">Certificate Date:</label>
-        <input type="date" id="certificateDate" name="certificateDate"><br>
-        
-        <label for="issueCertificateDate">Issue Certificate Date:</label>
-        <input type="date" id="issueCertificateDate" name="issueCertificateDate"><br>
-        
-        <label for="receiverName">Receiver Name:</label>
-        <input type="text" id="receiverName" name="receiverName"><br> -->
-        
-        <!-- <label for="feesPaid">Fees Paid:</label>
-            <input type="number" id="feesPaid" name="feesPaid"><br> -->
-            
-            <label for="amounttobePaid">Amount to be Paid:</label>
-            <input type="number" id="amounttobePaid" name="amounttobePaid" readonly><br>
-            
-            <label for="finalFees">Final Fees:</label>
-            <input type="number" id="finalFees" name="finalFees" readonly><br>
-            
-            <label for="completionDate">Completion Date:</label>
-            <input type="date" id="completionDate" name="completionDate"><br>
-            
-            <button type="submit">Submit</button>
         </form>
 
     <script>
@@ -89,11 +75,6 @@
                 document.getElementById('name').value = studentDetails.name || '';
                 document.getElementById('course').value = studentDetails.course || '';
                 document.getElementById('completionDate').value = studentDetails.completionDate || '';
-                // document.getElementById('examDate').value = studentDetails.examDate || '';
-                // document.getElementById('certificateDate').value = studentDetails.certificateDate || '';
-                // document.getElementById('issueCertificateDate').value = studentDetails.issueCertificateDate || '';
-                // document.getElementById('receiverName').value = studentDetails.receiverName || '';
-                // document.getElementById('feesPaid').value = studentDetails.feesPaid || '';
                 document.getElementById('installmentDate1').value = studentDetails.installmentDate1 || '';
                 document.getElementById('installmentAmount1').value = studentDetails.installmentAmount1 || '';
                 document.getElementById('installmentDate2').value = studentDetails.installmentDate2 || '';
@@ -144,16 +125,16 @@
 
     function calculateAmountToBePaid() {
         // Fetch the final fees and installment amounts
-        const finalFees = parseFloat(document.getElementById('finalFees').value) || 0;
-        const installmentAmount1 = parseFloat(document.getElementById('installmentAmount1').value) || 0;
-        const installmentAmount2 = parseFloat(document.getElementById('installmentAmount2').value) || 0;
-        const installmentAmount3 = parseFloat(document.getElementById('installmentAmount3').value) || 0;
+        var finalFees = parseFloat(document.getElementById('finalFees').value) || 0;
+        var installmentAmount1 = parseFloat(document.getElementById('installmentAmount1').value) || 0;
+        var installmentAmount2 = parseFloat(document.getElementById('installmentAmount2').value) || 0;
+        var installmentAmount3 = parseFloat(document.getElementById('installmentAmount3').value) || 0;
 
         // Calculate the amount to be paid
-        const amountToBePaid = finalFees - (installmentAmount1 + installmentAmount2 + installmentAmount3);
+        var amountToBePaid = finalFees - (installmentAmount1 + installmentAmount2 + installmentAmount3);
 
         // Update the "Amount to be Paid" field
-        document.getElementById('amountToBePaid').value = amountToBePaid;
+        document.getElementById('amounttobePaid').value = amountToBePaid;
     }
 
     // Event listeners to trigger the calculation
