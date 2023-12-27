@@ -1,0 +1,173 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Details</title>
+</head>
+<body>
+    <h1>Student Details</h1>
+    <form action="/update_remaining_data" method="post">
+        <label for="studentId">Student ID:</label>
+        <input type="text" id="studentId" name="studentId" required>
+        <button type="button" onclick="fetchStudentDetails()">Fetch Details</button><br>
+
+        <label for="batch">Batch Name:</label>
+        <input type="text" id="batch" name="batch" readonly><br>
+
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" readonly><br>
+
+        <label for="course">Course:</label>
+        <input type="text" id="course" name="course" readonly><br>
+
+        <label for="pcNumber">PC Number:</label>
+        <select id="pcNumber" name="pcNumber">
+            <option value="" selected disabled>Select PC Number</option>
+        </select><br>
+
+        
+        <label for="installmentDate1">Installment Date 1:</label>
+        <input type="date" id="installmentDate1" name="installmentDate1"><br>
+ 
+        <label for="installmentAmount1">Installment Amount 1:</label>
+        <input type="number" id="installmentAmount1" name="installmentAmount1"><br>
+        
+        <label for="installmentDate2">Installment Date 2:</label>
+        <input type="date" id="installmentDate2" name="installmentDate2"><br>
+
+        <label for="installmentAmount2">Installment Amount 2:</label>
+        <input type="number" id="installmentAmount2" name="installmentAmount2"><br>
+
+        <label for="installmentDate3">Installment Date 3:</label>
+        <input type="date" id="installmentDate3" name="installmentDate3"><br>
+
+        <label for="installmentAmount3">Installment Amount 3:</label>
+        <input type="number" id="installmentAmount3" name="installmentAmount3"><br>
+        
+        <!-- <label for="examDate">Exam Date:</label>
+        <input type="date" id="examDate" name="examDate"><br>
+
+        <label for="certificateDate">Certificate Date:</label>
+        <input type="date" id="certificateDate" name="certificateDate"><br>
+        
+        <label for="issueCertificateDate">Issue Certificate Date:</label>
+        <input type="date" id="issueCertificateDate" name="issueCertificateDate"><br>
+        
+        <label for="receiverName">Receiver Name:</label>
+        <input type="text" id="receiverName" name="receiverName"><br> -->
+        
+        <!-- <label for="feesPaid">Fees Paid:</label>
+            <input type="number" id="feesPaid" name="feesPaid"><br> -->
+            
+            <label for="amounttobePaid">Amount to be Paid:</label>
+            <input type="number" id="amounttobePaid" name="amounttobePaid" readonly><br>
+            
+            <label for="finalFees">Final Fees:</label>
+            <input type="number" id="finalFees" name="finalFees" readonly><br>
+            
+            <label for="completionDate">Completion Date:</label>
+            <input type="date" id="completionDate" name="completionDate"><br>
+            
+            <button type="submit">Submit</button>
+        </form>
+
+    <script>
+        function fetchStudentDetails() {
+        var studentId = document.getElementById('studentId').value;
+
+        // Make an AJAX request to the server to fetch student details
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', '/get_student_details?id=' + studentId, true);
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                var studentDetails = JSON.parse(xhr.responseText);
+
+                // Update form fields with fetched details
+                document.getElementById('batch').value = studentDetails.batch || '';
+                document.getElementById('name').value = studentDetails.name || '';
+                document.getElementById('course').value = studentDetails.course || '';
+                document.getElementById('completionDate').value = studentDetails.completionDate || '';
+                // document.getElementById('examDate').value = studentDetails.examDate || '';
+                // document.getElementById('certificateDate').value = studentDetails.certificateDate || '';
+                // document.getElementById('issueCertificateDate').value = studentDetails.issueCertificateDate || '';
+                // document.getElementById('receiverName').value = studentDetails.receiverName || '';
+                // document.getElementById('feesPaid').value = studentDetails.feesPaid || '';
+                document.getElementById('installmentDate1').value = studentDetails.installmentDate1 || '';
+                document.getElementById('installmentAmount1').value = studentDetails.installmentAmount1 || '';
+                document.getElementById('installmentDate2').value = studentDetails.installmentDate2 || '';
+                document.getElementById('installmentAmount2').value = studentDetails.installmentAmount2 || '';
+                document.getElementById('installmentDate3').value = studentDetails.installmentDate3 || '';
+                document.getElementById('installmentAmount3').value = studentDetails.installmentAmount3 || '';
+                document.getElementById('finalFees').value = studentDetails.finalFees || '';
+
+                // Populate PC dropdown based on availability
+                populatePCDropdown(studentDetails.batch, studentDetails.pcNumber);
+            }
+        };
+        xhr.send();
+    }
+
+    function populatePCDropdown(batchName, assignedPC) {
+        var pcNumberDropdown = document.getElementById('pcNumber');
+        pcNumberDropdown.innerHTML = ''; // Clear existing options
+
+        // If PC is assigned, set it as the default value
+        if (assignedPC) {
+            var assignedOption = document.createElement('option');
+            assignedOption.value = assignedPC;
+            assignedOption.text = assignedPC;
+            assignedOption.selected = true;
+            pcNumberDropdown.add(assignedOption);
+        } else {
+            // Make an AJAX request to get available PCs for the batch
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', '/get_unassigned_pcs?batch=' + batchName, true);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText);
+                    var unassignedPCs = response.pcs;
+
+                    // Populate the PC dropdown with available options
+                    unassignedPCs.forEach(function(pc) {
+                        var option = document.createElement('option');
+                        option.value = pc;
+                        option.text = pc;
+                        pcNumberDropdown.add(option);
+                    });
+                }
+            };
+            xhr.send();
+        }
+    }
+
+    function calculateAmountToBePaid() {
+        // Fetch the final fees and installment amounts
+        const finalFees = parseFloat(document.getElementById('finalFees').value) || 0;
+        const installmentAmount1 = parseFloat(document.getElementById('installmentAmount1').value) || 0;
+        const installmentAmount2 = parseFloat(document.getElementById('installmentAmount2').value) || 0;
+        const installmentAmount3 = parseFloat(document.getElementById('installmentAmount3').value) || 0;
+
+        // Calculate the amount to be paid
+        const amountToBePaid = finalFees - (installmentAmount1 + installmentAmount2 + installmentAmount3);
+
+        // Update the "Amount to be Paid" field
+        document.getElementById('amountToBePaid').value = amountToBePaid;
+    }
+
+    // Event listeners to trigger the calculation
+    document.getElementById('installmentAmount1').addEventListener('input', calculateAmountToBePaid);
+    document.getElementById('installmentAmount2').addEventListener('input', calculateAmountToBePaid);
+    document.getElementById('installmentAmount3').addEventListener('input', calculateAmountToBePaid);
+
+        //     document.getElementById('remainingFees').addEventListener('focus', function() {
+        //     var feesPaid = parseFloat(document.getElementById('feesPaid').value) || 0;
+        //     var initialRemainingFees = parseFloat(document.getElementById('remainingFees').value) || 0;
+        //     var remainingFees = initialRemainingFees - feesPaid;
+        //     document.getElementById('remainingFees').value = remainingFees;
+        // });
+        
+    </script>
+</body>
+</html>
