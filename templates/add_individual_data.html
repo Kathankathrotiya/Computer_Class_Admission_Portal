@@ -26,7 +26,6 @@
         <select id="pcNumber" name="pcNumber">
             <option value="" selected disabled>Select PC Number</option>
         </select><br>
-
         
         <label for="installmentDate1">Installment Date 1:</label>
         <input type="date" id="installmentDate1" name="installmentDate1"><br>
@@ -141,13 +140,6 @@
     document.getElementById('installmentAmount1').addEventListener('input', calculateAmountToBePaid);
     document.getElementById('installmentAmount2').addEventListener('input', calculateAmountToBePaid);
     document.getElementById('installmentAmount3').addEventListener('input', calculateAmountToBePaid);
-
-        //     document.getElementById('remainingFees').addEventListener('focus', function() {
-        //     var feesPaid = parseFloat(document.getElementById('feesPaid').value) || 0;
-        //     var initialRemainingFees = parseFloat(document.getElementById('remainingFees').value) || 0;
-        //     var remainingFees = initialRemainingFees - feesPaid;
-        //     document.getElementById('remainingFees').value = remainingFees;
-        // });
         
     </script>
 </body>
