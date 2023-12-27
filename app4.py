@@ -297,11 +297,11 @@ def add_individual_data_route():
 def get_student_details():
     student_id = request.args.get('id')
 
+    student_details = {}
     try:
         batch_workbook = load_workbook('batch_data.xlsx')
         batch_sheets = batch_workbook.sheetnames
 
-        student_details = {}
 
         for batch_name in batch_sheets:
             batch_sheet = batch_workbook[batch_name]
