@@ -137,11 +137,6 @@ def update_remaining_data():
                     print(f"Found Student ID {student_id} in Batch {batch_name} at Row {row_index}")
 
                     # Update remaining data based on the submitted form data
-                    # batch_sheet.cell(row=row_index, column=6).value = request.form.get('completionDate')
-                    # batch_sheet.cell(row=row_index, column=7).value = request.form.get('examDate')
-                    # batch_sheet.cell(row=row_index, column=8).value = request.form.get('certificateDate')
-                    # batch_sheet.cell(row=row_index, column=9).value = request.form.get('issueCertificateDate')
-                    # batch_sheet.cell(row=row_index, column=10).value = request.form.get('receiverName')
                     batch_sheet.cell(row=row_index, column=9).value = request.form.get('installmentAmount1')
                     batch_sheet.cell(row=row_index, column=10).value = request.form.get('installmentDate1')
                     batch_sheet.cell(row=row_index, column=11).value = request.form.get('installmentAmount2')
@@ -165,8 +160,7 @@ def update_remaining_data():
                         completion_row_index = 2
                         while completion_sheet.cell(row=completion_row_index, column=1).value is not None:
                             completion_row_index += 1
-                        # (['ID', 'Name', 'Batch','Course','Mobile No','Completion Date', 'Exam Date', 'Certificate Date', 'Issue Certificate Date', 'Receiver Name', 'Final Fees'])
-                        # (['ID', 'Name', 'Mobile No 1', 'City','Course','PC Number','','Final Fees','Installment_1_Amount','Installment_1_Date','Installment_2_Amount','Installment_2_Date','Installment_3_Amount','Installment_3_Date','Fees Remaining','Completion Date'])
+
                         # Assign specific values to each column in completion_data.xlsx
                         completion_sheet.cell(row=completion_row_index, column=1, value=batch_sheet.cell(row=row_index, column=1).value)
                         completion_sheet.cell(row=completion_row_index, column=2, value=batch_sheet.cell(row=row_index, column=2).value)
@@ -210,17 +204,14 @@ def update_completion_data():
         completion_workbook = load_workbook('completion_data.xlsx')
         completion_sheet = completion_workbook.active
 
-        # (['ID', 'Name', 'Batch','Course','Mobile No','Completion Date', 'Exam Date', 'Certificate Date', 'Issue Certificate Date', 'Receiver Name', 'Final Fees'])
         # Find the row with the matching student ID
         for row in completion_sheet.iter_rows(min_row=2, max_col=12, max_row=completion_sheet.max_row):
             if row[0].value == int(student_id):
                 # Update the completion data
-                # row[5].value = completion_date
                 row[6].value = exam_date
                 row[7].value = certificate_date
                 row[8].value = issue_certificate_date
                 row[9].value = receiver_name
-                # row[10].value = final_fees
 
                 completion_workbook.save('completion_data.xlsx')
 
