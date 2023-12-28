@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../styles/main.css">
+    <link rel="stylesheet" href="../styles/inquiry.css">
+
+    <title>{% block title %}Student Management{% endblock %}</title>
+</head>
+<body>
+    <nav>
+        <a href="/add_inquiry_data">Add Inquiry Data</a>
+        <a href="/index">Student Registration</a>
+        <a href="/add_individual_data">Add Individual Data</a>
+        <a href="/add_completion_data">Add Completion Data</a>
+    </nav>
+
+    <h1>Inquiry Form</h1>
+    <form action="/add_inquiry" method="post" enctype="multipart/form-data">
+
+        <label for="inquiryDate">Inquiry Date:</label>
+        <input type="date" id="inquiryDate" name="inquiryDate" readonly><br>
+
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name"><br>
+
+        <label for="city">City:</label>
+        <input type="text" id="city" name="city"><br>
+
+        <label for="moNo">Mobile No:</label>
+        <input type="tel" id="moNo" name="moNo"><br>
+
+        <label for="course">Course:</label>
+            <select id="course" name="course">
+                <option value="Mathematics">Mathematics</option>
+                <option value="Science">Science</option>
+                <option value="History">History</option>
+                <!-- Add more options as needed -->
+                
+            </select><br>
+
+        <label for="startDate">Starting Date:</label>
+        <input type="date" id="startDate" name="startDate"><br>
+
+        <label for="batch">Batch:</label>
+        <select id="batch" name="batch">
+            <option value="B1">B1</option>
+            <option value="B2">B2</option>
+            <option value="B3">B3</option>
+            <!-- Add more options as needed -->
+        </select><br>
+
+        <button type="submit">Submit</button>
+    </form>
+
+</body>
+</html>

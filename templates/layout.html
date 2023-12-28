@@ -3,19 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Student Management{% endblock %}</title>
+    <title>Student Management</title>
+    <link rel="stylesheet" href="../styles/main.css">
 </head>
 <body>
     <nav>
-        <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/add_individual_data">Add Individual Data</a></li>
-            <li><a href="/add_completion_data">Add Completion Data</a></li>
-        </ul>
+        <a href="/add_inquiry_data">Add Inquiry Data</a>
+        <a href="/index">Student Registration</a>
+        <a href="/add_individual_data">Add Individual Data</a>
+        <a href="/add_completion_data">Add Completion Data</a>
     </nav>
 
-    <div>
-        {% block content %}{% endblock %}
+    <div style="padding: 20px;">
+        <h1>Welcome to Active Computer and English</h1>
+        <p>Navigate from above bar</p>
     </div>
 </body>
 </html>

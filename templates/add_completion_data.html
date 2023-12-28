@@ -1,12 +1,20 @@
-<!-- templates/update_completion_data.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Update Completion Data</title>
+    <link rel="stylesheet" href="../styles/main.css">
+    <link rel="stylesheet" href="../styles/complete.css">
+    <title>{% block title %}Student Management{% endblock %}</title>
 </head>
 <body>
+    <nav>
+        <a href="/add_inquiry_data">Add Inquiry Data</a>
+        <a href="/index">Student Registration</a>
+        <a href="/add_individual_data">Add Individual Data</a>
+        <a href="/add_completion_data">Add Completion Data</a>
+    </nav>
+
     <h1>Update Completion Data</h1>
     <form action="/update_completion_data" method="post">
         <label for="studentId">Student ID:</label>
@@ -29,8 +37,8 @@
         <label for="examDate">Exam Date:</label>
         <input type="date" id="examDate" name="examDate"><br>
 
-        <label for="certificateDate">Certificate Date:</label>
-        <input type="date" id="certificateDate" name="certificateDate"><br>
+        <label for="certificateNumber">Certificate Number:</label>
+        <input type="text" id="certificateNumber" name="certificateNumber"><br>
 
         <label for="issueCertificateDate">Issue Certificate Date:</label>
         <input type="date" id="issueCertificateDate" name="issueCertificateDate"><br>
@@ -39,7 +47,7 @@
         <input type="text" id="receiverName" name="receiverName"><br>
 
         <label for="finalFees">Final Fees:</label>
-        <input type="number" id="finalFees" name="finalFees"><br>
+        <input type="number" id="finalFees" name="finalFees" readonly><br>
 
         <!-- Submit button -->
         <button type="submit">Submit</button>
@@ -62,7 +70,7 @@
                     document.getElementById('course').value = studentDetails['Course'] || '';
                     document.getElementById('completionDate').value = studentDetails['Completion Date'] || '';
                     document.getElementById('examDate').value = studentDetails['Exam Date'] || '';
-                    document.getElementById('certificateDate').value = studentDetails['Certificate Date'] || '';
+                    document.getElementById('certificateNumber').value = studentDetails['Certificate Number'] || '';
                     document.getElementById('issueCertificateDate').value = studentDetails['Issue Certificate Date'] || '';
                     document.getElementById('receiverName').value = studentDetails['Receiver Name'] || '';
                     document.getElementById('finalFees').value = studentDetails['Final Fees'] || '';

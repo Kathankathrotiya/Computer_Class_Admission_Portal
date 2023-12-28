@@ -1,12 +1,20 @@
-<!-- templates/index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Details</title>
+    <link rel="stylesheet" href="../styles/main.css">
+    <link rel="stylesheet" href="../styles/update.css">
+    <title>{% block title %}Student Management{% endblock %}</title>
 </head>
 <body>
+    <nav>
+        <a href="/add_inquiry_data">Add Inquiry Data</a>
+        <a href="/index">Student Registration</a>
+        <a href="/add_individual_data">Add Individual Data</a>
+        <a href="/add_completion_data">Add Completion Data</a>
+    </nav>
+
     <h1>Student Details</h1>
     <form action="/update_remaining_data" method="post">
         <label for="studentId">Student ID:</label>
