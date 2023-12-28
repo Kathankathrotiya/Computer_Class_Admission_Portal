@@ -18,7 +18,7 @@ def ensure_student_file():
     if not Path(file_path).is_file():
         workbook = openpyxl.Workbook()
         sheet = workbook.active
-        sheet.append(['ID', 'Name', 'Address', 'City', 'Course Done','Course Name' 'Mobile No 1', 'Mobile No 2', 'Date of Birth', 'Standard Studying', 'Course', 'Starting Date', 'Batch','Fees', 'Discount', 'Final Fees'])
+        sheet.append(['ID', 'Name', 'Address', 'City', 'Mobile No 1', 'Mobile No 2','Standard Studying','School','Date of Birth','Father Occupation','Course Done','Which','Where', 'Course Name','Starting Date', 'Batch','Fees', 'Discount', 'Final Fees'])
         workbook.save(file_path)
 
 def ensure_batch_file():
@@ -27,12 +27,20 @@ def ensure_batch_file():
         workbook = openpyxl.Workbook()
         workbook.save(file_path)
 
+def ensure_inquiry_file():
+    file_path = 'inquiry_data.xlsx'
+    if not Path(file_path).is_file():
+        workbook = openpyxl.Workbook()
+        sheet = workbook.active
+        sheet.append(['ID', 'Inquiry Date','Name','City', 'Mobile No','Course Name','Starting Date', 'Batch'])
+        workbook.save(file_path)
+
 def ensure_completion_file():
     file_path = 'completion_data.xlsx'
     if not Path(file_path).is_file():
         workbook = openpyxl.Workbook()
         sheet = workbook.active
-        sheet.append(['ID', 'Name', 'Batch','Course','Mobile No','Completion Date', 'Exam Date', 'Certificate Date', 'Issue Certificate Date', 'Receiver Name', 'Final Fees'])
+        sheet.append(['ID', 'Name', 'Batch','Course','Mobile No','Completion Date', 'Exam Date', 'Certificate Number', 'Issue Certificate Date', 'Receiver Name', 'Final Fees'])
         workbook.save(file_path)
 
 def save_to_excel(data):
@@ -55,18 +63,21 @@ def save_to_excel(data):
     student_sheet.cell(row=row_index, column=2, value=data['name'])
     student_sheet.cell(row=row_index, column=3, value=data['address'])
     student_sheet.cell(row=row_index, column=4, value=data['city'])
-    student_sheet.cell(row=row_index, column=5, value=data['course1'])
-    student_sheet.cell(row=row_index, column=6, value=data['courseName'])
-    student_sheet.cell(row=row_index, column=7, value=data['moNo1'])
-    student_sheet.cell(row=row_index, column=8, value=data['moNo2'])
+    student_sheet.cell(row=row_index, column=5, value=data['moNo1'])
+    student_sheet.cell(row=row_index, column=6, value=data['moNo2'])
+    student_sheet.cell(row=row_index, column=7, value=data['standard'])
+    student_sheet.cell(row=row_index, column=8, value=data['school'])
     student_sheet.cell(row=row_index, column=9, value=data['dob'])
-    student_sheet.cell(row=row_index, column=10, value=data['standard'])
-    student_sheet.cell(row=row_index, column=11, value=data['course'])
-    student_sheet.cell(row=row_index, column=12, value=data['startDate'])
-    student_sheet.cell(row=row_index, column=13, value=data['batch'])
-    student_sheet.cell(row=row_index, column=14, value=data['fees'])
-    student_sheet.cell(row=row_index, column=15, value=data['discount'])
-    student_sheet.cell(row=row_index, column=16, value=data['finalFees'])
+    student_sheet.cell(row=row_index, column=10, value=data['occ'])
+    student_sheet.cell(row=row_index, column=11, value=data['course1'])
+    student_sheet.cell(row=row_index, column=12, value=data['courseWhich'])
+    student_sheet.cell(row=row_index, column=13, value=data['courseWhere'])
+    student_sheet.cell(row=row_index, column=14, value=data['course'])
+    student_sheet.cell(row=row_index, column=15, value=data['startDate'])
+    student_sheet.cell(row=row_index, column=16, value=data['batch'])
+    student_sheet.cell(row=row_index, column=17, value=data['fees'])
+    student_sheet.cell(row=row_index, column=18, value=data['discount'])
+    student_sheet.cell(row=row_index, column=19, value=data['finalFees'])
 
     student_workbook.save('student_data.xlsx')
 
@@ -137,6 +148,7 @@ def update_remaining_data():
                     print(f"Found Student ID {student_id} in Batch {batch_name} at Row {row_index}")
 
                     # Update remaining data based on the submitted form data
+                    batch_sheet.cell(row=row_index, column=6).value = request.form.get('pcNumber', '')  # Ensure pcNumber is correctly handled
                     batch_sheet.cell(row=row_index, column=9).value = request.form.get('installmentAmount1')
                     batch_sheet.cell(row=row_index, column=10).value = request.form.get('installmentDate1')
                     batch_sheet.cell(row=row_index, column=11).value = request.form.get('installmentAmount2')
@@ -145,7 +157,6 @@ def update_remaining_data():
                     batch_sheet.cell(row=row_index, column=14).value = request.form.get('installmentDate3')
                     batch_sheet.cell(row=row_index, column=15).value = request.form.get('amounttobePaid')
                     batch_sheet.cell(row=row_index, column=16).value = request.form.get('completionDate')
-                    batch_sheet.cell(row=row_index, column=6).value = request.form.get('pcNumber', '')  # Ensure pcNumber is correctly handled
 
                     batch_workbook.save('batch_data.xlsx')
 
@@ -193,7 +204,7 @@ def update_completion_data():
         student_id = request.form.get('studentId')
         completion_date = request.form.get('completionDate')
         exam_date = request.form.get('examDate')
-        certificate_date = request.form.get('certificateDate')
+        certificate_number = request.form.get('certificateNumber')
         issue_certificate_date = request.form.get('issueCertificateDate')
         receiver_name = request.form.get('receiverName')
         final_fees = request.form.get('finalFees')
@@ -209,7 +220,7 @@ def update_completion_data():
             if row[0].value == int(student_id):
                 # Update the completion data
                 row[6].value = exam_date
-                row[7].value = certificate_date
+                row[7].value = certificate_number
                 row[8].value = issue_certificate_date
                 row[9].value = receiver_name
 
@@ -222,9 +233,54 @@ def update_completion_data():
 
     return "Update Failed"
 
+@app.route('/add_inquiry', methods=['POST'])
+def add_inquiry():
+    ensure_inquiry_file()
+    try:
+        inquiry_workbook = load_workbook('inquiry_data.xlsx')
+        inquiry_sheet = inquiry_workbook['Sheet']
+
+        inquiry_date = request.form.get('inquiryDate')
+        city = request.form.get('city')
+        mono = request.form.get('mono')
+        name = request.form.get('name')
+        course = request.form.get('course')
+        batch = request.form.get('batch')
+        start_date = request.form.get('startDate')
+
+        # Find the first empty row
+        row_index = 2
+        while inquiry_sheet.cell(row=row_index, column=1).value is not None:
+            row_index += 1
+
+        # Use the same ID for both student and batch data
+        student_id = row_index - 1
+
+        # Update the student data Excel file with the new data
+        inquiry_sheet.cell(row=row_index, column=1, value=student_id)
+        inquiry_sheet.cell(row=row_index, column=2, value=inquiry_date)
+        inquiry_sheet.cell(row=row_index, column=3, value=name)
+        inquiry_sheet.cell(row=row_index, column=4, value=city)
+        inquiry_sheet.cell(row=row_index, column=5, value=mono)
+        inquiry_sheet.cell(row=row_index, column=6, value=course)
+        inquiry_sheet.cell(row=row_index, column=7, value=batch)
+        inquiry_sheet.cell(row=row_index, column=8, value=start_date)
+
+        inquiry_workbook.save('inquiry_data.xlsx')
+
+        return "Update Successful"
+
+    except Exception as e:
+        print(f"Error: {e}")
+
+    return "Update Failed"
 
 @app.route('/')
 def index():
+    return render_template('layout.html')
+
+@app.route('/index')
+def initial():
     return render_template('index.html')
 
 @app.route('/update_excel', methods=['POST'])
@@ -240,9 +296,13 @@ def update_excel():
 def add_individual_data():
     return render_template('add_individual_data.html')
 
-@app.route('/add_completion_data')  # Changed route name
-def add_completion_data():  # Changed route function name
+@app.route('/add_completion_data')  
+def add_completion_data(): 
     return render_template('add_completion_data.html')
+
+@app.route('/add_inquiry_data')  
+def add_inquiry_data():  
+    return render_template('add_inquiry_data.html')
 
 @app.route('/get_student_details_from_completion')
 def get_student_details_from_completion():
@@ -259,7 +319,7 @@ def get_student_details_from_completion():
         for row in completion_sheet.iter_rows(min_row=2, max_col=16, max_row=completion_sheet.max_row):
             if row[0].value == int(student_id):
                 # Populate the student_details dictionary with column names and values
-                column_names = ['ID', 'Name', 'Batch','Course','Mobile No','Completion Date', 'Exam Date', 'Certificate Date', 'Issue Certificate Date', 'Receiver Name', 'Final Fees']
+                column_names = ['ID', 'Name', 'Batch','Course','Mobile No','Completion Date', 'Exam Date', 'Certificate Number', 'Issue Certificate Date', 'Receiver Name', 'Final Fees']
                 
                 for col_index in range(len(column_names)):
                     student_details[column_names[col_index]] = row[col_index].value
