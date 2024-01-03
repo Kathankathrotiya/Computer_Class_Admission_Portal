@@ -32,7 +32,7 @@ def ensure_inquiry_file():
     if not Path(file_path).is_file():
         workbook = openpyxl.Workbook()
         sheet = workbook.active
-        sheet.append(['ID', 'Inquiry Date','Name','City', 'Mobile No','Course Name','Starting Date', 'Batch'])
+        sheet.append(['ID', 'Inquiry Date','Name','City', 'Mobile No','Course Name','Batch','Starting Date'])
         workbook.save(file_path)
 
 def ensure_completion_file():
@@ -94,8 +94,12 @@ def save_to_excel(data):
     if batch_sheet.max_row == 1:
         batch_sheet.append(['ID', 'Name', 'Mobile No 1', 'City','Course','PC Number','','Final Fees','Installment_1_Amount','Installment_1_Date','Installment_2_Amount','Installment_2_Date','Installment_3_Amount','Installment_3_Date','Fees Remaining','Completion Date'])
 
+    
     # Find the first empty row
     row_index = batch_sheet.max_row + 1
+
+    if row_index >= 22:
+        return "Batch is full. Maximum admissions reached."
 
     # Set the initial remaining fees to the final fees submitted in the form
     initial_remaining_fees = data['finalFees']
@@ -118,6 +122,7 @@ def save_to_excel(data):
     batch_sheet.cell(row=row_index, column=16, value='') #Completion date
 
     batch_workbook.save('batch_data.xlsx')
+    return "Admission Successful"
 
 @app.route('/update_remaining_data', methods=['POST'])
 def update_remaining_data():
@@ -190,12 +195,14 @@ def update_remaining_data():
                         completion_workbook.save('completion_data.xlsx')
 
 
-                    return "Update Successful"
+                    response_data = {'status': 'error', 'message': 'Update Successful'}
+                    return jsonify(response_data)
 
     except Exception as e:
         print(f"Error: {e}")
 
-    return "Update Failed"
+    response_data = {'status': 'error', 'message': 'Update Failed'}
+    return jsonify(response_data)
 
 # Add this route in your Flask application
 @app.route('/update_completion_data', methods=['POST'])
@@ -226,12 +233,14 @@ def update_completion_data():
 
                 completion_workbook.save('completion_data.xlsx')
 
-                return "Update Successful"
+                response_data = {'status': 'error', 'message': 'Update Successful'}
+                return jsonify(response_data)
 
     except Exception as e:
         print(f"Error: {e}")
 
-    return "Update Failed"
+    response_data = {'status': 'error', 'message': 'Update Failed'}
+    return jsonify(response_data)
 
 @app.route('/add_inquiry', methods=['POST'])
 def add_inquiry():
@@ -242,7 +251,7 @@ def add_inquiry():
 
         inquiry_date = request.form.get('inquiryDate')
         city = request.form.get('city')
-        mono = request.form.get('mono')
+        mono = request.form.get('moNo')
         name = request.form.get('name')
         course = request.form.get('course')
         batch = request.form.get('batch')
@@ -268,12 +277,62 @@ def add_inquiry():
 
         inquiry_workbook.save('inquiry_data.xlsx')
 
-        return "Update Successful"
+        response_data = {'status': 'success', 'message': 'Update Successful'}
+        return jsonify(response_data)
 
     except Exception as e:
         print(f"Error: {e}")
 
-    return "Update Failed"
+    response_data = {'status': 'error', 'message': 'Update Failed'}
+    return jsonify(response_data)
+
+@app.route('/get_student_list')
+def get_student_list():
+    try:
+        batch_workbook = load_workbook('batch_data.xlsx')
+        batch_sheets = batch_workbook.sheetnames
+
+        student_list = []
+
+        for batch_name in batch_sheets:
+            batch_sheet = batch_workbook[batch_name]
+
+            col_index = None
+            for cell in batch_sheet[1]:
+                if cell.value == 'ID':
+                    col_index = cell.column
+
+            if col_index is not None:
+                for row in batch_sheet.iter_rows(min_row=2, max_col=1, max_row=batch_sheet.max_row):
+                    student_id = row[0].value
+                    student_name = batch_sheet.cell(row=row[0].row, column=2).value
+                    student_list.append({'id': student_id, 'name': student_name})
+
+        return jsonify({'students': student_list})
+
+    except Exception as e:
+        print(f"Error: {e}")
+        return jsonify({'error': 'Failed to fetch student list'})
+    
+
+@app.route('/get_completion_student_list')
+def get_completion_student_list():
+    try:
+        completion_workbook = load_workbook('completion_data.xlsx')
+        completion_sheet = completion_workbook.active
+
+        student_list = []
+
+        for row in completion_sheet.iter_rows(min_row=2, max_col=2, max_row=completion_sheet.max_row):
+            student_id = row[0].value
+            student_name = row[1].value
+            student_list.append({'id': student_id, 'name': student_name})
+
+        return jsonify({'students': student_list})
+
+    except Exception as e:
+        print(f"Error: {e}")
+        return jsonify({'error': 'Failed to fetch student list for completion data'})
 
 @app.route('/')
 def index():
@@ -288,9 +347,11 @@ def update_excel():
     try:
         data = request.form.to_dict()
         save_to_excel(data)
-        return jsonify({'message': 'Data updated successfully'})
+        response_data = {'status': 'success', 'message': 'Update Successful'}
+        return jsonify(response_data)
     except Exception as e:
-        return jsonify({'error': str(e)})
+        response_data = {'status': 'error', 'message': str(e)}
+        return jsonify(response_data)
 
 @app.route('/add_individual_data')
 def add_individual_data():
@@ -340,9 +401,11 @@ def add_individual_data_route():
         data['pcNumber'] = int(request.form.get('pcNumber'))
 
         update_remaining_data(data)
-        return jsonify({'message': 'Individual data added successfully'})
+        response_data = {'status': 'success', 'message': 'Update Successful'}
+        return jsonify(response_data)
     except Exception as e:
-        return jsonify({'error': str(e)})
+        response_data = {'status': 'error', 'message': str(e)}
+        return jsonify(response_data)
 
 @app.route('/get_student_details')
 def get_student_details():
