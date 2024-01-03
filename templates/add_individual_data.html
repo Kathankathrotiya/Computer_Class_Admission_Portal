@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../styles/main.css">
-    <link rel="stylesheet" href="../styles/update.css">
+    <link rel="stylesheet" href="../static/styles/main.css">
+    <link rel="stylesheet" href="../static/styles/update.css">
     <title>{% block title %}Student Management{% endblock %}</title>
 </head>
 <body>
@@ -18,9 +18,11 @@
     <h1>Student Details</h1>
     <form action="/update_remaining_data" method="post">
         <label for="studentId">Student ID:</label>
-        <input type="text" id="studentId" name="studentId" required>
-        <button type="button" onclick="fetchStudentDetails()">Fetch Details</button><br>
+        <select id="studentId" name="studentId"></select>
+        <!-- Options will be dynamically populated using JavaScript -->
 
+        <button type="button" onclick="fetchStudentDetails()">Fetch Details</button><br>
+        <br>
         <label for="batch">Batch Name:</label>
         <input type="text" id="batch" name="batch" readonly><br>
 
@@ -88,6 +90,7 @@
                 document.getElementById('installmentAmount2').value = studentDetails.installmentAmount2 || '';
                 document.getElementById('installmentDate3').value = studentDetails.installmentDate3 || '';
                 document.getElementById('installmentAmount3').value = studentDetails.installmentAmount3 || '';
+                document.getElementById('amounttobePaid').value = studentDetails.amounttobePaid || '';
                 document.getElementById('finalFees').value = studentDetails.finalFees || '';
 
                 // Populate PC dropdown based on availability
@@ -149,6 +152,72 @@
     document.getElementById('installmentAmount2').addEventListener('input', calculateAmountToBePaid);
     document.getElementById('installmentAmount3').addEventListener('input', calculateAmountToBePaid);
         
+    document.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                // Get the active element
+                var activeElement = document.activeElement;
+
+                // Find all input fields in the form
+                var inputFields = Array.from(activeElement.form.querySelectorAll('input, select'));
+
+                // Find the index of the active input field
+                var currentIndex = inputFields.indexOf(activeElement);
+
+                // Move focus to the next input field
+                var nextIndex = (currentIndex + 1) % inputFields.length;
+                inputFields[nextIndex].focus();
+            }
+        });
+
+        function populateStudentDropdown() {
+        var studentIdDropdown = document.getElementById('studentId');
+        studentIdDropdown.innerHTML = '';
+
+        // Make an AJAX request to get the list of students
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', '/get_student_list', true);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                var studentList = JSON.parse(xhr.responseText);
+
+                // Populate the student dropdown with available options
+                studentList.students.forEach(function (student) {
+                    var option = document.createElement('option');
+                    option.value = student.id;
+                    option.text = student.name + ' (ID: ' + student.id + ')';
+                    studentIdDropdown.add(option);
+                });
+            }
+        };
+        xhr.send();
+    }
+
+    // Call the function to populate the student dropdown on page load
+    populateStudentDropdown();
+
+    document.querySelector('form').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            var formData = new FormData(this);
+
+            // Make an AJAX request to handle form submission
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/update_remaining_data', true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    var response = JSON.parse(xhr.responseText);
+
+                    // Display a pop-up with the response message
+                    alert(response.message);
+
+                    // Clear the form fields
+                    document.querySelector('form').reset();
+                }
+            };
+            xhr.send(new URLSearchParams(formData));
+        });
     </script>
 </body>
 </html>

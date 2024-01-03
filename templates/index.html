@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../styles/main.css">
-    <link rel="stylesheet" href="../styles/register.css">
+    <link rel="stylesheet" href="../static/styles/main.css">
+    <link rel="stylesheet" href="../static/styles/register.css">
     <title>{% block title %}Student Management{% endblock %}</title>
 </head>
 <body>
@@ -64,24 +64,25 @@
         </div>
 
         <label for="course">Course:</label>
-            <select id="course" name="course">
-                <option value="Mathematics">Mathematics</option>
-                <option value="Science">Science</option>
-                <option value="History">History</option>
-                <!-- Add more options as needed -->
-
+            <select id="course" name="course" onchange="updateBatchOptions()">
+                <option value="MS Office">MS Office</option>
+                <option value="CCC">CCC</option>
+                <option value="MS Office & Internet">MS Office & Internet</option>
+                <option value="English">English</option>
+                <option value="Tally">Tally</option>
+                <option value="Miracle">Miracle</option>
+                <option value="Photoshop">Photoshop</option>
+                <option value="Auto CAD">Auto CAD 3D</option>
+                <option value="Archi CAD">Archi CAD</option>
+                <option value="C/C++">C/C++</option>
+                <option value="PHP">PHP</option>
             </select><br>
 
-            <label for="startDate">Starting Date:</label>
-        <input type="date" id="startDate" name="startDate"><br>
+        <label for="startDate">Starting Date:</label>
+        <input type="date" id="startDate" name="startDate" ><br>
 
         <label for="batch">Batch:</label>
-        <select id="batch" name="batch">
-            <option value="B1">B1</option>
-            <option value="B2">B2</option>
-            <option value="B3">B3</option>
-            <!-- Add more options as needed -->
-        </select><br>
+        <select id="batch" name="batch"></select><br>
 
         <label for="fees">Fees:</label>
         <input type="number" id="fees" name="fees"><br>
@@ -115,6 +116,74 @@
             const discount = parseFloat(document.getElementById('discount').value) || 0;
             const finalFees = fees - discount;
             document.getElementById('finalFees').value = finalFees;
+        });
+        
+        function updateBatchOptions() {
+            var courseSelect = document.getElementById('course');
+            var batchSelect = document.getElementById('batch');
+            var selectedCourse = courseSelect.value;
+
+            // Clear existing options
+            batchSelect.innerHTML = '';
+
+            // Set batch names based on the selected course
+            var batchNames;
+            if (selectedCourse === 'English') {
+                batchNames = ['E1', 'E2', 'E3','E4','E5','E6', 'E7', 'E8','E9','E10'];
+            } else {
+                batchNames = ['B1', 'B2', 'B3','B4','B5','B6', 'B7', 'B8','B9','B10','B11', 'B12', 'B13',];
+            }
+
+            // Populate batch options
+            batchNames.forEach(function(batch) {
+                var option = document.createElement('option');
+                option.value = batch;
+                option.text = batch;
+                batchSelect.add(option);
+            });
+        }
+
+        // Call the function initially to populate batch options based on the default selected course
+        updateBatchOptions();
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                // Get the active element
+                var activeElement = document.activeElement;
+
+                // Find all input fields in the form
+                var inputFields = Array.from(activeElement.form.querySelectorAll('input, select'));
+
+                // Find the index of the active input field
+                var currentIndex = inputFields.indexOf(activeElement);
+
+                // Move focus to the next input field
+                var nextIndex = (currentIndex + 1) % inputFields.length;
+                inputFields[nextIndex].focus();
+            }
+        });
+        document.querySelector('form').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            var formData = new FormData(this);
+
+            // Make an AJAX request to handle form submission
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/update_excel', true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    var response = JSON.parse(xhr.responseText);
+
+                    // Display a pop-up with the response message
+                    alert(response.message);
+
+                    // Clear the form fields
+                    document.querySelector('form').reset();
+                }
+            };
+            xhr.send(new URLSearchParams(formData));
         });
     </script>
 </body>
