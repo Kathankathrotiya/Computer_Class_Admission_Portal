@@ -46,7 +46,6 @@ def ensure_completion_file():
 def save_to_excel(data):
     ensure_excel_files()
 
-    # Save data to student_data.xlsx
     student_workbook = load_workbook('student_data.xlsx')
     student_sheet = student_workbook['Sheet']
 
@@ -57,29 +56,6 @@ def save_to_excel(data):
 
     # Use the same ID for both student and batch data
     student_id = row_index - 1
-
-    # Update the student data Excel file with the new data
-    student_sheet.cell(row=row_index, column=1, value=student_id)
-    student_sheet.cell(row=row_index, column=2, value=data['name'])
-    student_sheet.cell(row=row_index, column=3, value=data['address'])
-    student_sheet.cell(row=row_index, column=4, value=data['city'])
-    student_sheet.cell(row=row_index, column=5, value=data['moNo1'])
-    student_sheet.cell(row=row_index, column=6, value=data['moNo2'])
-    student_sheet.cell(row=row_index, column=7, value=data['standard'])
-    student_sheet.cell(row=row_index, column=8, value=data['school'])
-    student_sheet.cell(row=row_index, column=9, value=data['dob'])
-    student_sheet.cell(row=row_index, column=10, value=data['occ'])
-    student_sheet.cell(row=row_index, column=11, value=data['course1'])
-    student_sheet.cell(row=row_index, column=12, value=data['courseWhich'])
-    student_sheet.cell(row=row_index, column=13, value=data['courseWhere'])
-    student_sheet.cell(row=row_index, column=14, value=data['course'])
-    student_sheet.cell(row=row_index, column=15, value=data['startDate'])
-    student_sheet.cell(row=row_index, column=16, value=data['batch'])
-    student_sheet.cell(row=row_index, column=17, value=data['fees'])
-    student_sheet.cell(row=row_index, column=18, value=data['discount'])
-    student_sheet.cell(row=row_index, column=19, value=data['finalFees'])
-
-    student_workbook.save('student_data.xlsx')
 
     # Save data to batch_data.xlsx
     batch_workbook = load_workbook('batch_data.xlsx')
@@ -122,6 +98,32 @@ def save_to_excel(data):
     batch_sheet.cell(row=row_index, column=16, value='') #Completion date
 
     batch_workbook.save('batch_data.xlsx')
+
+    # Save data to student_data.xlsx
+
+    # Update the student data Excel file with the new data
+    student_sheet.cell(row=row_index, column=1, value=student_id)
+    student_sheet.cell(row=row_index, column=2, value=data['name'])
+    student_sheet.cell(row=row_index, column=3, value=data['address'])
+    student_sheet.cell(row=row_index, column=4, value=data['city'])
+    student_sheet.cell(row=row_index, column=5, value=data['moNo1'])
+    student_sheet.cell(row=row_index, column=6, value=data['moNo2'])
+    student_sheet.cell(row=row_index, column=7, value=data['standard'])
+    student_sheet.cell(row=row_index, column=8, value=data['school'])
+    student_sheet.cell(row=row_index, column=9, value=data['dob'])
+    student_sheet.cell(row=row_index, column=10, value=data['occ'])
+    student_sheet.cell(row=row_index, column=11, value=data['course1'])
+    student_sheet.cell(row=row_index, column=12, value=data['courseWhich'])
+    student_sheet.cell(row=row_index, column=13, value=data['courseWhere'])
+    student_sheet.cell(row=row_index, column=14, value=data['course'])
+    student_sheet.cell(row=row_index, column=15, value=data['startDate'])
+    student_sheet.cell(row=row_index, column=16, value=data['batch'])
+    student_sheet.cell(row=row_index, column=17, value=data['fees'])
+    student_sheet.cell(row=row_index, column=18, value=data['discount'])
+    student_sheet.cell(row=row_index, column=19, value=data['finalFees'])
+
+    student_workbook.save('student_data.xlsx')
+
     return "Admission Successful"
 
 @app.route('/update_remaining_data', methods=['POST'])
@@ -195,7 +197,7 @@ def update_remaining_data():
                         completion_workbook.save('completion_data.xlsx')
 
 
-                    response_data = {'status': 'error', 'message': 'Update Successful'}
+                    response_data = {'status': 'success', 'message': 'Update Successful'}
                     return jsonify(response_data)
 
     except Exception as e:
@@ -233,7 +235,7 @@ def update_completion_data():
 
                 completion_workbook.save('completion_data.xlsx')
 
-                response_data = {'status': 'error', 'message': 'Update Successful'}
+                response_data = {'status': 'success', 'message': 'Update Successful'}
                 return jsonify(response_data)
 
     except Exception as e:
@@ -334,6 +336,70 @@ def get_completion_student_list():
         print(f"Error: {e}")
         return jsonify({'error': 'Failed to fetch student list for completion data'})
 
+@app.route('/get_current_registration_number')
+def get_current_registration_number():
+    try:
+        # Load the student workbook
+        student_workbook = openpyxl.load_workbook('student_data.xlsx')
+        student_sheet = student_workbook.active
+
+        # Find the first empty row in the student sheet
+        registration_number = student_sheet.max_row
+
+        # Return the current registration number as JSON
+        return jsonify({'registrationNumber': registration_number})
+    except Exception as e:
+        return jsonify({'error': str(e)})
+    
+# @app.route('/get_all_past_students', methods=['GET'])
+# def get_all_past_students():
+#     try:
+#         workbook = load_workbook('student_data.xlsx')
+#         sheet = workbook.active
+
+#         # Fetch details of all past students
+#         past_students = [{'id': row[0].value, 'name': row[1].value} for row in sheet.iter_rows(min_row=2, max_col=2, max_row=sheet.max_row)]
+
+#         return jsonify(past_students)
+
+#     except Exception as e:
+#         print(f"Error: {e}")
+
+#     return jsonify({'error': 'Failed to fetch past students'})
+
+# # Route to fetch details of a specific past student based on ID
+# @app.route('/fetch_past_student_details', methods=['GET'])
+# def fetch_past_student_details():
+#     student_id = request.args.get('id')
+
+#     try:
+#         workbook = load_workbook('student_data.xlsx')
+#         sheet = workbook.active
+
+#         # Find the row with the given student ID
+#         for row in sheet.iter_rows(min_row=2, max_col=sheet.max_column, max_row=sheet.max_row):
+#             if row[0].value == int(student_id):  # Assuming ID is in the first column
+#                 student_details = {
+#                     'name': row[1].value,
+#                     'address': row[2].value,
+#                     'city': row[3].value,
+#                     'moNo1': row[4].value,
+#                     'moNo2': row[5].value,
+#                     'standard': row[6].value,
+#                     'school':row[7].value,
+#                     'dob':row[8].value,
+#                     'occ':row[9].value,
+#                     'course1': row[10].value,
+#                     'courseWhere': row[11].value,
+#                     'courseWhich': row[12].value,
+#                 }
+#                 return jsonify(student_details)
+
+#     except Exception as e:
+#         print(f"Error: {e}")
+
+#     return jsonify({'error': 'Student details not found'})
+
 @app.route('/')
 def index():
     return render_template('layout.html')
@@ -346,9 +412,13 @@ def initial():
 def update_excel():
     try:
         data = request.form.to_dict()
-        save_to_excel(data)
-        response_data = {'status': 'success', 'message': 'Update Successful'}
-        return jsonify(response_data)
+        text=save_to_excel(data)
+        if text=="Admission Successful":
+            response_data = {'status': 'success', 'message': 'Update Successful'}
+            return jsonify(response_data)
+        else:
+            response_data = {'status': 'error', 'message': 'Batch is full. Maximum admissions reached.'}
+            return jsonify(response_data)
     except Exception as e:
         response_data = {'status': 'error', 'message': str(e)}
         return jsonify(response_data)

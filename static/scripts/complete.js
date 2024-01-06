@@ -83,8 +83,15 @@ document.querySelector('form').addEventListener('submit', function (event) {
             // Display a pop-up with the response message
             alert(response.message);
 
+            if (response.status === 'success') {
+                // Redirect to the home page or your desired page
+                window.location.href = '/';  // Change '/' to the desired route
+            }
+            else
+            {
             // Clear the form fields
-            document.querySelector('form').reset();
+            // document.querySelector('form').reset();
+            }
         }
     };
     xhr.send(new URLSearchParams(formData));

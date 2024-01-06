@@ -17,6 +17,22 @@
 
     <h1>Student Registration Form</h1>
     <form action="/update_excel" method="post" enctype="multipart/form-data">
+
+        <!-- <label for="isExistingStudent">Are you an existing student?</label>
+        <select id="isExistingStudent" name="isExistingStudent">
+            <option value="no" selected>No</option>
+            <option value="yes">Yes</option>
+        </select>
+
+        <div id="existingStudentDropdown" style="display: none;">
+            <label for="pastStudentDropdown">Select Past Student:</label>
+            <select id="pastStudentDropdown"></select>
+            <button type="button" id="fetchPastStudentButton">Fetch Details</button>
+        </div> -->
+
+        <label for="registrationNumber">Registration Number:</label>
+        <input type="text" id="registrationNumber" name="registrationNumber" readonly>
+
         <label for="name">Name:</label>
         <input type="text" id="name" name="name"><br>
 
