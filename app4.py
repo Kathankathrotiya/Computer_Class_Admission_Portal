@@ -320,7 +320,7 @@ def get_student_list():
 @app.route('/get_completion_student_list')
 def get_completion_student_list():
     try:
-        completion_workbook = load_workbook('completion_data.xlsx')
+        completion_workbook = load_workbook('completion_data.xlsx',read_only=True)
         completion_sheet = completion_workbook.active
 
         student_list = []
@@ -340,65 +340,73 @@ def get_completion_student_list():
 def get_current_registration_number():
     try:
         # Load the student workbook
-        student_workbook = openpyxl.load_workbook('student_data.xlsx')
-        student_sheet = student_workbook.active
+        student_workbook = load_workbook('student_data.xlsx',read_only=True)
+        student_sheet = student_workbook['Sheet']
 
-        # Find the first empty row in the student sheet
-        registration_number = student_sheet.max_row
+        # Find the first empty row
+        row_index = 2
+        while student_sheet.cell(row=row_index, column=1).value is not None:
+            row_index += 1
 
+        # Use the same ID for both student and batch data
+        registration_number = row_index - 1
         # Return the current registration number as JSON
         return jsonify({'registrationNumber': registration_number})
     except Exception as e:
         return jsonify({'error': str(e)})
     
-# @app.route('/get_all_past_students', methods=['GET'])
-# def get_all_past_students():
-#     try:
-#         workbook = load_workbook('student_data.xlsx')
-#         sheet = workbook.active
+@app.route('/get_all_past_students', methods=['GET'])
+def get_all_past_students():
+    try:
+        workbook = load_workbook('student_data.xlsx',read_only=True)
+        sheet = workbook['Sheet']
 
-#         # Fetch details of all past students
-#         past_students = [{'id': row[0].value, 'name': row[1].value} for row in sheet.iter_rows(min_row=2, max_col=2, max_row=sheet.max_row)]
+        # Fetch details of all past students
+        past_students = [{'id': row[0].value, 'name': row[1].value} for row in sheet.iter_rows(min_row=2, max_col=2, max_row=sheet.max_row)]
 
-#         return jsonify(past_students)
+        workbook.close()
+        return jsonify(past_students)
 
-#     except Exception as e:
-#         print(f"Error: {e}")
+    except Exception as e:
+        print(f"Error: {e}")
 
-#     return jsonify({'error': 'Failed to fetch past students'})
+    workbook.close()
+    return jsonify({'error': 'Failed to fetch past students'})
 
-# # Route to fetch details of a specific past student based on ID
-# @app.route('/fetch_past_student_details', methods=['GET'])
-# def fetch_past_student_details():
-#     student_id = request.args.get('id')
+# Route to fetch details of a specific past student based on ID
+@app.route('/fetch_past_student_details', methods=['GET'])
+def fetch_past_student_details():
+    student_id = request.args.get('id')
 
-#     try:
-#         workbook = load_workbook('student_data.xlsx')
-#         sheet = workbook.active
+    try:
+        workbook = load_workbook('student_data.xlsx',read_only=True)
+        sheet = workbook['Sheet']
 
-#         # Find the row with the given student ID
-#         for row in sheet.iter_rows(min_row=2, max_col=sheet.max_column, max_row=sheet.max_row):
-#             if row[0].value == int(student_id):  # Assuming ID is in the first column
-#                 student_details = {
-#                     'name': row[1].value,
-#                     'address': row[2].value,
-#                     'city': row[3].value,
-#                     'moNo1': row[4].value,
-#                     'moNo2': row[5].value,
-#                     'standard': row[6].value,
-#                     'school':row[7].value,
-#                     'dob':row[8].value,
-#                     'occ':row[9].value,
-#                     'course1': row[10].value,
-#                     'courseWhere': row[11].value,
-#                     'courseWhich': row[12].value,
-#                 }
-#                 return jsonify(student_details)
+        # Find the row with the given student ID
+        for row in sheet.iter_rows(min_row=2, max_col=sheet.max_column, max_row=sheet.max_row):
+            if row[0].value == int(student_id):  # Assuming ID is in the first column
+                student_details = {
+                    'name': row[1].value,
+                    'address': row[2].value,
+                    'city': row[3].value,
+                    'moNo1': row[4].value,
+                    'moNo2': row[5].value,
+                    'standard': row[6].value,
+                    'school':row[7].value,
+                    'dob':row[8].value,
+                    'occ':row[9].value,
+                    'course1': row[10].value,
+                    'courseWhere': row[11].value,
+                    'courseWhich': row[12].value,
+                }
+                workbook.close()
+                return jsonify(student_details)
 
-#     except Exception as e:
-#         print(f"Error: {e}")
-
-#     return jsonify({'error': 'Student details not found'})
+    except Exception as e:
+        print(f"Error: {e}")
+    
+    workbook.close()
+    return jsonify({'error': 'Student details not found'})
 
 @app.route('/')
 def index():
