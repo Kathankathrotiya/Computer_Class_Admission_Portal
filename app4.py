@@ -57,6 +57,9 @@ def save_to_excel(data):
     # Use the same ID for both student and batch data
     student_id = row_index - 1
 
+    student_workbook.close();
+    student_workbook.save('student_data.xlsx')
+
     # Save data to batch_data.xlsx
     batch_workbook = load_workbook('batch_data.xlsx')
 
@@ -100,6 +103,17 @@ def save_to_excel(data):
     batch_workbook.save('batch_data.xlsx')
 
     # Save data to student_data.xlsx
+
+    student_workbook = load_workbook('student_data.xlsx')
+    student_sheet = student_workbook['Sheet']
+
+    # Find the first empty row
+    row_index = 2
+    while student_sheet.cell(row=row_index, column=1).value is not None:
+        row_index += 1
+
+    # Use the same ID for both student and batch data
+    student_id = row_index - 1
 
     # Update the student data Excel file with the new data
     student_sheet.cell(row=row_index, column=1, value=student_id)
@@ -442,6 +456,10 @@ def add_completion_data():
 @app.route('/add_inquiry_data')  
 def add_inquiry_data():  
     return render_template('add_inquiry_data.html')
+
+@app.route('/edit_details')  
+def edit_details():  
+    return render_template('edit_batch.html')
 
 @app.route('/get_student_details_from_completion')
 def get_student_details_from_completion():
