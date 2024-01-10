@@ -1,0 +1,104 @@
+<!-- templates/change_batch_pc.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Change Batch and PC</title>
+</head>
+<body>
+    <h1>Change Batch and PC</h1>
+    <form action="/change_batch_pc" method="post">
+        <label for="studentId">Student ID:</label>
+        <input type="text" id="studentId" name="studentId" required>
+        <button type="button" onclick="fetchStudentDetails()">Fetch Details</button><br>
+
+        <label for="oldBatch">Old Batch:</label>
+        <input type="text" id="oldBatch" name="oldBatch" readonly><br>
+
+        <label for="oldPCNumber">Old PC Number:</label>
+        <input type="text" id="oldPCNumber" name="oldPCNumber" readonly><br>
+
+        <label for="newBatch">New Batch:</label>
+        <select id="newBatch" name="newBatch" required>
+            <!-- Options will be dynamically populated by JavaScript -->
+
+        </select><br>
+
+        <label for="pcNumber">PC Number:</label>
+        <select id="pcNumber" name="pcNumber">
+            <option value="" selected disabled>Select PC Number</option>
+        </select><br>
+
+        <button type="submit">Submit</button>
+    </form>
+
+    <script>
+        function updateBatchOptions() {
+            var batchSelect = document.getElementById('newBatch');
+
+            batchSelect.innerHTML = '';
+            batchNames = ['B1', 'B2', 'B3','B4','B5','B6', 'B7', 'B8','B9','B10','B11', 'B12', 'B13',];
+            batchNames.forEach(function(batch) {
+            var option = document.createElement('option');
+            option.value = batch;
+            option.text = batch;
+            batchSelect.add(option);
+            });
+        }
+        
+        function populatePCDropdown(batchName, assignedPC) {
+        var pcNumberDropdown = document.getElementById('pcNumber');
+        pcNumberDropdown.innerHTML = ''; // Clear existing options
+
+        // If PC is assigned, set it as the default value
+        if (assignedPC) {
+            var assignedOption = document.createElement('option');
+            assignedOption.value = assignedPC;
+            assignedOption.text = assignedPC;
+            assignedOption.selected = true;
+            pcNumberDropdown.add(assignedOption);
+        } else {
+        //     // Make an AJAX request to get available PCs for the batch
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', '/get_unassigned_pcs?batch=' + batchName, true);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText);
+                    var unassignedPCs = response.pcs;
+
+                    // Populate the PC dropdown with available options
+                    unassignedPCs.forEach(function(pc) {
+                        var option = document.createElement('option');
+                        option.value = pc;
+                        option.text = pc;
+                        pcNumberDropdown.add(option);
+                    });
+                }
+            };
+            xhr.send();
+        
+    }
+}
+        // Function to fetch details for a student ID from the server
+        function fetchStudentDetails() {
+            const studentId = document.getElementById('studentId').value.trim();
+            if (studentId !== '') {
+                // Make an AJAX request to get details for the provided student ID
+                fetch(`/get_student_details?id=${studentId}`)
+                    .then(response => response.json())
+                    .then(studentDetails => {
+                        // Update the Old Batch and Old PC Number fields
+                        document.getElementById('oldBatch').value = studentDetails.batch || '';
+                        document.getElementById('oldPCNumber').value = studentDetails.pcNumber || '';
+                    })
+                    updateBatchOptions();
+                    
+                }
+            }
+            document.getElementById('newBatch').addEventListener('change', function () { populatePCDropdown(document.getElementById('newBatch').value, 0);});
+            // consol.log(document.getElementById('newBatch').value);
+    </script>
+</body>
+</html>
