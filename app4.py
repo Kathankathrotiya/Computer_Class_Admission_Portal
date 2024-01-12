@@ -551,6 +551,82 @@ def get_student_details():
 
     return jsonify(student_details)
 
+def copy_and_move_record(student_id, old_batch, new_batch, new_pc_number):
+    try:
+        # Load batch workbook
+        batch_workbook = load_workbook('batch_data.xlsx')
+
+        # Find the old batch sheet and new batch sheet
+        old_batch_sheet = batch_workbook[old_batch]
+        new_batch_sheet = batch_workbook[new_batch]
+
+        # Find the row corresponding to the student ID in the old batch
+        row_index = None
+        for row in old_batch_sheet.iter_rows(min_row=2, max_col=1, max_row=old_batch_sheet.max_row):
+            if row[0].value == int(student_id):
+                row_index = row[0].row
+                break
+
+        if row_index is not None:
+            print(f"Found Student ID {student_id} in Batch {old_batch} at Row {row_index}")
+
+            # Copy the record to a variable
+            record = []
+            for cell in old_batch_sheet[row_index]:
+                record.append(cell.value)
+
+            # Delete the record from the old batch
+            old_batch_sheet.delete_rows(row_index)
+
+            # Add the record to the new batch with updated information
+            new_batch_sheet.append(record[0:5]+[new_pc_number] + record[6:])  # Adjust column indices as needed
+
+            # Save changes to batch workbook
+            batch_workbook.save('batch_data.xlsx')
+
+            return True
+
+    except Exception as e:
+        print(f"Error: {e}")
+
+    return False
+
+@app.route('/change_batch_pc', methods=['POST'])
+def change_batch_pc():
+    try:
+        student_id = request.form.get('studentId')
+        old_batch = request.form.get('oldBatch')
+        old_pc_number = request.form.get('oldPCNumber')
+        new_batch = request.form.get('newBatch')
+        new_pc_number = request.form.get('pcNumber')
+
+        print(f"Received request to change batch and PC for Student ID {student_id}")
+
+        batch_workbook = load_workbook('batch_data.xlsx')
+        new_batch_sheet = batch_workbook[new_batch]
+        if new_batch_sheet.max_row >22:
+            return jsonify({'status': 'error', 'message': 'New batch has reached the maximum capacity of 21 students.'})
+
+
+        # Copy and move the record to the new batch
+        if copy_and_move_record(student_id, old_batch, new_batch, new_pc_number):
+            student_workbook = load_workbook('student_data.xlsx')
+            student_sheet = student_workbook.active
+
+            for row in student_sheet.iter_rows(min_row=2, max_col=1, max_row=student_sheet.max_row):
+                if row[0].value == int(student_id):
+                    student_sheet.cell(row=row[0].row, column=16, value=new_batch)
+                    break
+
+            student_workbook.save('student_data.xlsx')
+
+            return jsonify({'status': 'success', 'message': 'Batch and PC updated successfully'})
+
+    except Exception as e:
+        print(f"Error: {e}")
+
+    return jsonify({'status': 'error', 'message': 'Failed to update batch and PC'})
+
 # Add this function to get unassigned PCs
 @app.route('/get_unassigned_pcs')
 def get_unassigned_pcs_route():

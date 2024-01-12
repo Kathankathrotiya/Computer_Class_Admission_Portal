@@ -1,6 +1,6 @@
     function updateBatchOptions() {
         var courseSelect = document.getElementById('course');
-        var batchSelect = document.getElementById('batch');
+            
     var selectedCourse = courseSelect.value;
 
     // Clear existing options
