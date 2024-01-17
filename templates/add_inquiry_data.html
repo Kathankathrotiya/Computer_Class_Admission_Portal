@@ -10,6 +10,7 @@
 </head>
 <body>
     <nav>
+        <a href="/">Home</a>
         <a href="/add_inquiry_data">Add Inquiry Data</a>
         <a href="/index">Student Registration</a>
         <a href="/add_individual_data">Add Individual Data</a>
@@ -21,14 +22,14 @@
     <form action="/add_inquiry" method="post" enctype="multipart/form-data">
 
         <label for="inquiryDate">Inquiry Date:</label>
-        <input type="date" id="inquiryDate" name="inquiryDate" value="{{ currentDate }}><br>
-
+        <input type="date" id="inquiryDate" name="inquiryDate" ><br>
+        
         <label for="name">Name:</label>
         <input type="text" id="name" name="name"><br>
 
         <label for="city">City:</label>
         <input type="text" id="city" name="city"><br>
-
+        
         <label for="moNo">Mobile No:</label>
         <input type="tel" id="moNo" name="moNo"><br>
 
@@ -50,13 +51,13 @@
 
         <label for="startDate">Starting Date:</label>
         <input type="date" id="startDate" name="startDate"><br>
-
+        
         <label for="batch">Batch:</label>
         <select id="batch" name="batch"> </select><br>
-
+        
         <button type="submit">Submit</button>
     </form>
-
+    
     <script src="../static/scripts/inquiry.js"></script>
 </body>
 </html>
