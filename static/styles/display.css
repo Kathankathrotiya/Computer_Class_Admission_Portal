@@ -5,6 +5,7 @@ h1 {
     text-align: center;
 }
 
+
 form {
     max-width: 600px;
     margin: 0 auto;
@@ -13,6 +14,7 @@ form {
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
+
 
 label {
     display: block;
@@ -30,12 +32,29 @@ select {
     border-radius: 4px;
 }
 
-input[type="radio"] {
-    margin-right: 4px;
+table {
+    width: 80%;
+    margin: auto;
+    border-collapse: collapse;
+    table-layout: auto;
+    max-width: 100%;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: #ecf0f5; /* Light blue background color */
 }
 
-div {
-    margin-bottom: 16px;
+th, td {
+    padding: 12px;
+    border: 1px solid #bdd7ee; /* Lighter blue border color */
+    text-align: left;
+}
+
+th {
+    background-color: #3498db; /* Blue color for header background */
+    color: #fff;
+}
+
+tr:hover {
+    background-color: #d4e6f1; /* Slightly darker blue on hover */
 }
 
 button {
@@ -52,8 +71,7 @@ button:hover {
     background: #2980b9; /* Darker shade on hover */
 }
 
-/* Optional: Style for error messages */
-.error {
-    color: #ff0000;
-    margin-top: 5px;
+#studentsTable {
+    margin-top: 20px;
+    overflow-x: auto;
 }

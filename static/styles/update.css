@@ -1,6 +1,6 @@
 h1 {
     font-size: 24px;
-    color: #333;
+    color: #3498db; /* Match the theme color */
     margin-bottom: 20px;
     text-align: center;
 }
@@ -28,16 +28,17 @@ select {
 }
 
 button {
-    background-color: #4caf50;
-    color: white;
-    padding: 10px 15px;
+    background: #3498db; /* Match the theme color */
+    color: #fff;
+    padding: 10px 20px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    font-size: 16px;
 }
 
 button:hover {
-    background-color: #45a049;
+    background: #2980b9; /* Darker shade on hover */
 }
 
 /* Optional: Style the readonly fields differently */

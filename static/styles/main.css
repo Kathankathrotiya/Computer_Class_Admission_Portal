@@ -1,19 +1,47 @@
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f4f4f4;
+  color: #333;
+  margin: 0;
+}
+
 nav {
-  background-color: #333;
+  background-color: #3498db; /* Blue color */
   color: #fff;
-  padding: 10px;
-  text-align: center;
+  padding: 10px 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 nav a {
-  color: #fff;
   text-decoration: none;
+  color: #fff;
+  font-weight: bold;
+  margin-right: 20px;
   padding: 10px;
-  margin: 0 10px;
   border-radius: 5px;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 nav a:hover {
-  background-color: #555;
+  background-color: #2980b9; /* Darker blue on hover */
+}
+
+.container {
+  max-width: 800px;
+  margin: 20px auto;
+}
+
+header {
+  text-align: center;
+  padding: 40px 0;
+  background-color: #3498db; /* Blue color */
+  color: #fff;
+}
+
+h1 {
+  color: #444;
+}
+
+p {
+  color: #444; /* Darker font color for better visibility */
 }
