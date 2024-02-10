@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../static/styles/main.css">
-    <title>Student Management</title>
+    <link rel="stylesheet" href="../static/styles/display.css">
+    <title>Display Students</title>
 </head>
 <body>
     <nav>
@@ -17,9 +18,15 @@
         <a href="/display_batch">View Batch</a>
     </nav>
 
-    <div style="padding: 20px;">
-        <h1>Welcome to XYZ Computer and English</h1>
-        <p>Navigate from above bar</p>
-    </div>
+    <h1>Display Students in Batch</h1>
+    <form>
+        <label for="batch">Select Batch:</label>
+        <select id="batch" name="batch" required>
+        </select>
+        <button onclick="displayStudents()">Display Students</button>
+    </form>
+    <div id="studentsTable"></div>
+    
+    <script src="../static/scripts/display.js"></script>
 </body>
 </html>

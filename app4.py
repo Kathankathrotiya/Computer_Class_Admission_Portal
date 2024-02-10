@@ -461,6 +461,10 @@ def add_inquiry_data():
 def edit_details():  
     return render_template('edit_batch.html')
 
+@app.route('/display_batch')
+def display_batch():
+    return render_template('display_batch.html')
+
 @app.route('/get_student_details_from_completion')
 def get_student_details_from_completion():
     student_id = request.args.get('id')
@@ -591,6 +595,37 @@ def copy_and_move_record(student_id, old_batch, new_batch, new_pc_number):
 
     return False
 
+@app.route('/get_students_in_batch', methods=['GET'])
+def get_students_in_batch():
+    try:
+        batch_name = request.args.get('batch')
+        batch_workbook = load_workbook('batch_data.xlsx')
+        batch_sheet = batch_workbook[batch_name]
+
+        student_list = []
+        col_index = None
+        for cell in batch_sheet[1]:
+            if cell.value == 'ID':
+                col_index = cell.column
+
+        if col_index is not None:
+            for row in batch_sheet.iter_rows(min_row=2, max_col=16, max_row=batch_sheet.max_row):
+                student_id = row[0].value
+                student_name = row[1].value
+                student_mono = row[2].value
+                student_city = row[3].value
+                student_course = row[4].value
+                student_pcno = row[5].value
+                student_feesrem = row[14].value
+                student_list.append({'id': student_id, 'name': student_name, 'mono': student_mono, 'city':student_city, 'course':student_course,'pcno':student_pcno,'feesrem':student_feesrem})
+        
+        print(student_list)
+        return jsonify({'students': student_list})
+    
+    except Exception as e:
+        print(f"Error: {e}")
+        return jsonify({'error': str(e)})
+    
 @app.route('/change_batch_pc', methods=['POST'])
 def change_batch_pc():
     try:
